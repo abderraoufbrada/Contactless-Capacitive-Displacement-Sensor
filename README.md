@@ -42,21 +42,25 @@ The main objectives are:
 
 The sensing element operates on the principle of a parallel-plate capacitor.
 
-Its capacitance is approximately described by:
+Its capacitance is approximately described by the following equation:
 
-\[
+$$
 C = \frac{\varepsilon_0 \varepsilon_r A}{d}
-\]
+$$
 
 Where:
 
-- \(C\): Capacitance (F).
-- \(\varepsilon_0\): Vacuum permittivity.
-- \(\varepsilon_r\): Relative permittivity of the dielectric.
-- \(A\): Effective overlapping electrode area (m²).
-- \(d\): Distance between the electrodes (m).
+- $C$: Capacitance (F).
+- $\varepsilon_0$: Vacuum permittivity (F/m).
+- $\varepsilon_r$: Relative permittivity of the dielectric.
+- $A$: Effective overlapping electrode area (m²).
+- $d$: Distance between the electrodes (m).
 
-For an air dielectric, \(\varepsilon_r \approx 1\).
+For an air dielectric, the relative permittivity is approximately:
+
+$$
+\varepsilon_r \approx 1
+$$
 
 As the distance between the electrodes increases, capacitance decreases. Conversely, reducing the distance increases capacitance.
 
@@ -64,37 +68,62 @@ As the distance between the electrodes increases, capacitance decreases. Convers
 
 The capacitance is measured indirectly using an RC charging circuit.
 
-The capacitor voltage during charging is:
+The capacitor voltage during charging is given by:
 
-\[
-V_C(t)=V_S\left(1-e^{-t/RC}\right)
-\]
+$$
+V_C(t) = V_S \left(1 - e^{-\frac{t}{RC}}\right)
+$$
 
-The time constant is:
+The time constant of the RC circuit is:
 
-\[
-\tau=RC
-\]
+$$
+\tau = RC
+$$
 
 When the capacitor voltage reaches half of the supply voltage:
 
-\[
-V_C(t)=\frac{V_S}{2}
-\]
+$$
+V_C(t) = \frac{V_S}{2}
+$$
 
-The corresponding charging time is:
+Substituting this condition into the charging equation:
 
-\[
-t=RC\ln(2)
-\]
+$$
+\frac{V_S}{2} = V_S \left(1 - e^{-\frac{t}{RC}}\right)
+$$
 
-Therefore, the capacitance can be estimated using:
+Simplifying:
 
-\[
-\boxed{C=\frac{t}{R\ln(2)}}
-\]
+$$
+e^{-\frac{t}{RC}} = \frac{1}{2}
+$$
 
-The ESP32 measures the time required for the sensor voltage to cross the reference threshold. This time is then used to calculate the capacitance.
+Taking the natural logarithm of both sides:
+
+$$
+-\frac{t}{RC} = \ln\left(\frac{1}{2}\right)
+$$
+
+Therefore, the charging time is:
+
+$$
+t = RC\ln(2)
+$$
+
+The capacitance can consequently be calculated as:
+
+$$
+C = \frac{t}{R\ln(2)}
+$$
+
+Where:
+
+- $t$: Measured charging time (s).
+- $R$: Charging resistance (Ω).
+- $C$: Sensor capacitance (F).
+- $\ln(2)$: Threshold factor, approximately 0.693.
+
+The ESP32 measures the time required for the sensor voltage to cross the reference threshold. This time is then used to estimate the capacitance.
 
 ### 3.3 Measurement Sequence
 
@@ -123,7 +152,6 @@ The system is divided into five main functional blocks:
 | Digital Processing | Measures time, calculates capacitance, and estimates displacement. |
 
 ## 5. Hardware Implementation
-
 ### 5.1 Main Components
 
 | Component | Description |
