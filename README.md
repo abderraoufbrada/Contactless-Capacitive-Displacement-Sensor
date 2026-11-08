@@ -1,40 +1,49 @@
-# Contactless Capacitive Displacement Sensor
+# Capacitive Displacement Sensor – Electronic Ruler
 
-**Design, Implementation, and Experimental Characterization of an RC-Based Capacitive Displacement Measurement System**
+An experimental contactless displacement measurement system based on a parallel-plate capacitive sensor, an RC charging circuit, an LM358 operational amplifier, and an ESP32 microcontroller.
 
-<p align="center">
-  <img src="docs/images/project-banner.png" alt="Capacitive Displacement Sensor Project" width="800">
-</p>
+The system estimates the distance between two conductive plates by measuring the capacitor charging time. The measured capacitance is then converted into displacement using a piecewise cubic calibration model. An I2C LCD displays the capacitance and estimated distance in real time.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Platform-ESP32-blue?style=flat-square">
-  <img src="https://img.shields.io/badge/Analog%20Interface-LM358-orange?style=flat-square">
-  <img src="https://img.shields.io/badge/Sensor-Capacitive-green?style=flat-square">
-  <img src="https://img.shields.io/badge/Status-Experimental-yellow?style=flat-square">
-</p>
+---
 
 ## 1. Project Overview
 
-This project presents the design and experimental implementation of a **contactless capacitive displacement sensor** based on the variation of capacitance between two parallel conductive plates.
+This project focuses on developing a low-cost electronic ruler using the variation of capacitance between two parallel conductive plates.
 
-The sensing element consists of two PCB electrodes, one fixed and one movable. Displacement changes the separation between the electrodes, resulting in a variation in capacitance.
+The sensing element consists of two PCB electrodes:
+- One fixed electrode.
+- One movable electrode.
 
-The measured capacitance is converted into a time interval through an RC charging circuit. An LM358 operational amplifier is used as a threshold detector, while two C1815 NPN transistors handle capacitor discharge and signal interfacing. An ESP32 measures the threshold-crossing time and processes the measurement to estimate displacement.
+Changing the gap between the electrodes changes the capacitance. An electronic interface converts this variation into a measurable time interval, which is processed by an ESP32 to estimate the displacement.
 
-The project focuses on developing a low-cost analog measurement interface and evaluating its performance through experimental measurements and comparison with a digital multimeter.
+The final measurement is displayed on a 16×2 I2C LCD.
+
+### Main Features
+
+- Contactless capacitive displacement sensing.
+- RC charging-time measurement.
+- LM358-based threshold detection.
+- ESP32-based timing and signal processing.
+- Experimental calibration using PCHIP piecewise cubic interpolation.
+- Real-time LCD measurement display.
+- Serial Monitor output for debugging and data collection.
+
+---
 
 ## 2. Project Objectives
 
 The main objectives are:
 
-- Design and fabricate a capacitive sensing element using PCB electrodes.
-- Develop an analog RC interface for capacitance measurement.
-- Implement threshold detection using an LM358.
-- Measure the RC charging time using an ESP32.
-- Convert measured capacitance into displacement through calibration.
-- Investigate the influence of charging resistance on measurement performance.
-- Compare the electronic measurement system against a digital multimeter.
-- Evaluate sensitivity, repeatability, resolution, and measurement error.
+- Design and construct a parallel-plate capacitive displacement sensor.
+- Develop an electronic interface for capacitance measurement.
+- Convert capacitance variations into RC charging-time variations.
+- Process the measured time using an ESP32.
+- Establish an experimental relationship between capacitance and displacement.
+- Implement a calibration model to estimate the distance.
+- Display the results on an LCD.
+- Evaluate the measurement behavior under different experimental conditions.
+
+---
 
 ## 3. Operating Principle
 
@@ -42,7 +51,7 @@ The main objectives are:
 
 The sensing element operates on the principle of a parallel-plate capacitor.
 
-Its capacitance is approximately described by the following equation:
+Its capacitance is approximately described by:
 
 $$
 C = \frac{\varepsilon_0 \varepsilon_r A}{d}
@@ -56,285 +65,356 @@ Where:
 - $A$: Effective overlapping electrode area (m²).
 - $d$: Distance between the electrodes (m).
 
-For an air dielectric, the relative permittivity is approximately:
+For an air dielectric:
 
 $$
 \varepsilon_r \approx 1
 $$
 
-As the distance between the electrodes increases, capacitance decreases. Conversely, reducing the distance increases capacitance.
+The capacitance increases when the distance between the electrodes decreases. Conversely, increasing the gap reduces the capacitance.
 
-### 3.2 RC Time Measurement
+### 3.2 RC Charging-Time Measurement
 
-The capacitance is measured indirectly using an RC charging circuit.
+The capacitance is measured indirectly through an RC charging circuit.
 
-The capacitor voltage during charging is given by:
+The capacitor voltage during charging is:
 
 $$
-V_C(t) = V_S \left(1 - e^{-\frac{t}{RC}}\right)
+V_C(t) = V_S \left(1-e^{-\frac{t}{RC}}\right)
 $$
 
-The time constant of the RC circuit is:
+The time constant is:
 
 $$
 \tau = RC
 $$
 
-When the capacitor voltage reaches half of the supply voltage:
+The LM358-based threshold detection stage monitors the capacitor voltage and generates a digital transition when the voltage crosses the reference threshold.
+
+For a threshold equal to half the charging supply:
 
 $$
-V_C(t) = \frac{V_S}{2}
+V_C(t)=\frac{V_S}{2}
 $$
 
-Substituting this condition into the charging equation:
+Substituting into the charging equation:
 
 $$
-\frac{V_S}{2} = V_S \left(1 - e^{-\frac{t}{RC}}\right)
+\frac{V_S}{2}=V_S\left(1-e^{-\frac{t}{RC}}\right)
 $$
 
-Simplifying:
+Therefore:
 
 $$
-e^{-\frac{t}{RC}} = \frac{1}{2}
+e^{-\frac{t}{RC}}=\frac{1}{2}
 $$
 
-Taking the natural logarithm of both sides:
+Taking the natural logarithm:
 
 $$
--\frac{t}{RC} = \ln\left(\frac{1}{2}\right)
+-\frac{t}{RC}=\ln\left(\frac{1}{2}\right)
 $$
 
-Therefore, the charging time is:
+The charging time becomes:
 
 $$
-t = RC\ln(2)
+t=RC\ln(2)
 $$
 
-The capacitance can consequently be calculated as:
+Thus, the capacitance can be estimated using:
 
 $$
-C = \frac{t}{R\ln(2)}
+C=\frac{t}{R\ln(2)}
 $$
 
 Where:
 
 - $t$: Measured charging time (s).
 - $R$: Charging resistance (Ω).
-- $C$: Sensor capacitance (F).
-- $\ln(2)$: Threshold factor, approximately 0.693.
+- $C$: Capacitance (F).
+- $\ln(2)\approx0.693147$.
 
-The ESP32 measures the time required for the sensor voltage to cross the reference threshold. This time is then used to estimate the capacitance.
+**Important:** This simplified equation assumes that the comparator threshold is exactly half of the charging supply voltage. If the actual reference voltage differs, the general expression is:
+
+$$
+C=\frac{-t}{R\ln\left(1-\frac{V_{\mathrm{ref}}}{V_S}\right)}
+$$
+
+The actual circuit threshold and charging voltage should therefore be considered when evaluating measurement accuracy.
 
 ### 3.3 Measurement Sequence
 
-1. The sensor capacitor is discharged through Q2.
-2. Q2 is switched OFF to initiate capacitor charging.
-3. The capacitor voltage increases through the charging resistor.
-4. The LM358 detects when the voltage crosses the reference threshold.
-5. Q1 provides a logic-compatible signal to the ESP32.
-6. The ESP32 measures the elapsed time and calculates capacitance.
-7. A calibration function converts capacitance into displacement.
+The ESP32 performs the following operations during each measurement cycle:
 
-## 4. System Architecture
+1. Activates transistor Q2 to discharge the sensor capacitor.
+2. Deactivates Q2 to start capacitor charging through the charging resistor.
+3. Records the starting time using `micros()`.
+4. Monitors the digital output from Q1.
+5. Detects the threshold-crossing event.
+6. Calculates the elapsed charging time.
+7. Estimates the capacitance using the RC equation.
+8. Converts capacitance into displacement using the calibration function.
+9. Displays the results on the LCD and Serial Monitor.
 
-<p align="center">
-  <img src="docs/images/system-block-diagram.png" alt="System Block Diagram" width="800">
-</p>
+---
 
-The system is divided into five main functional blocks:
+## 4. Hardware Architecture
 
-| Block | Function |
-|---|---|
-| Capacitive Sensor | Converts mechanical displacement into capacitance variation. |
-| RC Interface | Converts capacitance into a charging-time variation. |
-| Threshold Detector | Detects the reference-voltage crossing using LM358. |
-| Switching and Signal Interface | Controls capacitor discharge and interfaces the detection signal. |
-| Digital Processing | Measures time, calculates capacitance, and estimates displacement. |
-
-## 5. Hardware Implementation
-### 5.1 Main Components
+### 4.1 System Components
 
 | Component | Description |
 |---|---|
-| ESP32-WROOM-32 | Measurement, timing, and data processing |
+| ESP32 | Main controller and time measurement |
 | LM358 | Analog threshold detection |
-| 2 × C1815 | NPN switching transistors |
-| PCB Electrodes | Capacitive sensing element |
-| 100 kΩ resistor | Initial RC charging resistance |
-| 10 kΩ resistors | Reference-voltage divider and signal pull-up |
+| 2× C1815 | Switching and signal-interface transistors |
+| PCB electrodes | Capacitive sensing element |
+| 100 kΩ resistor | RC charging resistor |
 | 4.7 kΩ resistors | Transistor base resistors |
+| 10 kΩ resistor | GPIO27 pull-up |
+| 10 kΩ × 2 | Reference voltage divider |
+| 16×2 I2C LCD | Measurement display |
 | 100 nF capacitor | Supply decoupling |
 | 5 V supply | LM358 power supply |
 
-### 5.2 Capacitive Sensor
+### 4.2 ESP32 Pin Configuration
 
-The sensing element consists of two rectangular PCB electrodes.
-
-- Electrode dimensions: **10 cm × 12.5 cm**.
-- Electrode configuration: Parallel conductive plates.
-- Dielectric: Air.
-- Mechanical configuration: One fixed electrode and one movable electrode.
-
-<p align="center">
-  <img src="docs/images/sensor-electrodes.jpg" alt="PCB Capacitive Sensor Electrodes" width="650">
-</p>
-
-*Figure: Fabricated PCB electrodes used as the capacitive sensing element.*
-
-### 5.3 Electronic Circuit
-
-<p align="center">
-  <img src="docs/images/electronic-circuit.png" alt="Electronic Circuit Schematic" width="800">
-</p>
-
-The initial electronic implementation uses an LM358-based threshold detection circuit.
-
-The ESP32 controls the discharge transistor through GPIO26 and reads the detection signal through GPIO27.
-
-| ESP32 Pin | Connection | Function |
-|---|---|---|
-| GPIO26 | Q2 base through 4.7 kΩ | Capacitor discharge control |
-| GPIO27 | Q1 collector | Threshold detection input |
-| 3.3 V | Sensor charging resistor and pull-up | Logic-compatible supply |
-| GND | Common ground | Circuit reference |
-
-**Power supply considerations:**
-
-- LM358 is powered from 5 V.
-- ESP32 GPIO pins operate at 3.3 V logic.
-- The sensor charging node and GPIO pull-up must remain compatible with the ESP32 input voltage.
-- All circuit grounds must be connected together.
-
-## 6. Experimental Characterization
-
-Experimental characterization was performed to investigate the relationship between electrode displacement and measured capacitance.
-
-Two measurement methods were considered:
-
-1. The developed electronic measurement circuit.
-2. A digital multimeter used as a reference instrument.
-
-The capacitance was recorded at different electrode positions while maintaining the same mechanical configuration.
-
-### 6.1 Electronic Circuit vs. Digital Multimeter
-
-<p align="center">
-  <img src="docs/images/capacitance-comparison.png" alt="Capacitance versus Displacement: Electronic Circuit and Multimeter" width="900">
-</p>
-
-*Figure: Experimental comparison of capacitance measurements obtained using the developed circuit and a digital multimeter.*
-
-The experimental results demonstrate a decreasing capacitance as electrode separation increases.
-
-The electronic circuit successfully detects displacement-related capacitance variations. However, differences in measured capacitance values and measurement resolution remain under investigation.
-
-### 6.2 Charging Resistance Investigation
-
-The charging resistance directly influences the RC charging time:
-
-\[
-t=0.693RC
-\]
-
-Increasing the resistance increases the measured charging time for a given capacitance. This can improve the practical timing resolution, although excessively high resistance may increase sensitivity to leakage currents, noise, and parasitic effects.
-
-Experiments will be conducted using different charging resistances to evaluate their influence on measurement performance.
-
-<p align="center">
-  <img src="docs/images/resistance-comparison.png" alt="Comparison of measurement results for different charging resistances" width="850">
-</p>
-
-*Figure: Capacitance or charging-time response obtained using different RC charging resistances.*
-
-**Experimental configurations:**
-
-| Configuration | Charging Resistance | Status |
-|---|---:|---|
-| R1 | 100 kΩ | Initial implementation |
-| R2 | 1 MΩ | To be evaluated |
-| R3 | 4.7 MΩ | To be evaluated |
-| R4 | 10 MΩ | To be evaluated |
-
-*Only experimentally tested configurations should be reported as measured results.*
-
-### 6.3 Calibration
-
-The relationship between capacitance and displacement is not assumed to be perfectly linear.
-
-A calibration procedure is therefore used to map measured capacitance values to known mechanical positions.
-
-<p align="center">
-  <img src="docs/images/calibration-curve.png" alt="Capacitance Calibration Curve" width="800">
-</p>
-
-*Figure: Calibration curve relating measured capacitance to electrode displacement.*
-
-Calibration methods under consideration include:
-
-- Piecewise linear interpolation.
-- Polynomial fitting.
-- Lookup-table calibration.
-
-The selected calibration method should be evaluated using additional measurement points that are independent of the calibration dataset.
-
-## 7. Measurement Performance Evaluation
-
-The system will be evaluated using the following performance indicators:
-
-| Parameter | Purpose |
+| ESP32 Pin | Function |
 |---|---|
-| Sensitivity | Change in capacitance per unit displacement |
-| Resolution | Smallest detectable displacement variation |
-| Repeatability | Consistency across repeated measurements |
-| Linearity | Deviation from an ideal linear response |
-| Accuracy | Agreement with reference measurements |
-| Measurement Error | Difference between measured and reference values |
+| GPIO26 | Controls Q2 (capacitor discharge) |
+| GPIO27 | Reads Q1 output |
+| GPIO21 | I2C SDA |
+| GPIO22 | I2C SCL |
+| GND | Common ground |
 
-For a selected displacement interval, sensitivity can be estimated as:
+### 4.3 Electronic Interface
 
-\[
-S=\frac{\Delta C}{\Delta d}
-\]
+The electronic interface is composed of three main stages:
 
-The relative error with respect to the reference instrument can be calculated as:
+**1. RC Charging Stage**
 
-\[
-\text{Relative Error}(\%)=
-\frac{|C_{\text{circuit}}-C_{\text{reference}}|}
-{C_{\text{reference}}}\times100
-\]
+The sensor capacitor charges through a 100 kΩ resistor. Its charging time depends on the capacitance.
 
-## 8. Software Implementation
+**2. Threshold Detection Stage**
 
-The ESP32 firmware is developed using the Arduino framework.
+The LM358 monitors the sensor voltage and generates a switching signal when the voltage reaches the reference threshold.
 
-The firmware performs:
+**3. Transistor Interface Stage**
 
-- Capacitor discharge control.
-- RC charging-time measurement.
-- Threshold-crossing detection.
-- Capacitance calculation.
-- Displacement estimation through calibration.
-- Serial data output.
+Two C1815 NPN transistors are used:
 
-The measurement sequence is repeated periodically to provide continuous sensor monitoring.
+- Q1 interfaces the LM358 output with ESP32 GPIO27.
+- Q2 controls the discharge of the sensor capacitor through GPIO26.
 
-<p align="center">
-  <img src="docs/images/serial-monitor.png" alt="ESP32 Serial Monitor Measurements" width="750">
-</p>
+All circuit grounds must be connected together. The ESP32 GPIO pins must only receive signals within the 3.3 V logic range.
 
-### Main Measurement Equation
+---
+
+## 5. LCD Interface
+
+A 16×2 I2C LCD is used to display the measurement results.
+
+The LCD is connected through the ESP32 I2C interface:
+
+| LCD Pin | ESP32 Pin |
+|---|---|
+| SDA | GPIO21 |
+| SCL | GPIO22 |
+| VCC | According to LCD module requirements |
+| GND | GND |
+
+The LCD I2C address used in the firmware is:
 
 ```cpp
-capacitance = elapsedTime /
-              (0.693147 * chargingResistance);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 ```
 
-The calculated capacitance is subsequently passed to the calibration function to estimate displacement.
+The display presents two parameters:
+
+**First row:** Measured capacitance.
+
+**Second row:** Estimated displacement.
+
+Example:
+
+```text
+C:0.765nF
+Dist:4.00mm
+```
+
+If the threshold is not detected within the measurement timeout, the LCD displays a timeout message.
+
+---
+
+## 6. Experimental Calibration
+
+### 6.1 Why Calibration Is Necessary
+
+The theoretical parallel-plate capacitor equation does not fully describe the behavior of the assembled experimental sensor.
+
+Practical measurements can be affected by:
+
+- Parasitic capacitance.
+- PCB geometry and electrode alignment.
+- Electrical wiring and connections.
+- Environmental influences.
+- Mechanical positioning and gap uncertainty.
+- Limitations of the analog measurement interface.
+
+For this reason, an experimental calibration model is used to convert measured capacitance into displacement.
+
+### 6.2 PCHIP Piecewise Cubic Interpolation
+
+The firmware implements a piecewise cubic polynomial function called `calculateDistance()`.
+
+Its input is the measured capacitance in nF, and its output is the estimated distance in mm.
+
+The function divides the capacitance range into several intervals. Each interval has its own cubic polynomial:
+
+$$
+d(x)=a_ix^3+b_ix^2+c_ix+e_i
+$$
+
+Where:
+
+- $x$: Measured capacitance (nF).
+- $d(x)$: Estimated displacement (mm).
+- $a_i,b_i,c_i,e_i$: Calibration coefficients for the corresponding interval.
+
+The firmware uses a local variable:
+
+$$
+u=x-x_i
+$$
+
+This allows the polynomial to be evaluated relative to the beginning of each interval.
+
+The implementation follows a PCHIP-style piecewise cubic calibration approach, providing a smooth interpolation between calibration points while preserving the experimentally established relationship.
+
+### 6.3 Calibration Range
+
+The current firmware contains the following capacitance breakpoints:
+
+| Capacitance (nF) | Estimated distance (mm) |
+|---:|---:|
+| 0.577 | 11 |
+| 0.592 | 10 |
+| 0.606 | 9 |
+| 0.620 | 8 |
+| 0.635 | 7 |
+| 0.664 | 6 |
+| 0.692 | 5 |
+| 0.765 | 4 |
+| 0.837 | 3 |
+| 0.981 | 2 |
+
+These values represent the calibration points encoded in the current firmware.
+
+**Note:** The function also clamps measurements outside the calibrated range to the endpoint distances: 11 mm for capacitance at or below 0.577 nF, and 2 mm for capacitance at or above 0.981 nF. Such values should not be interpreted as reliable extrapolated measurements.
+
+---
+
+## 7. Firmware and Software
+
+The firmware is developed using the Arduino framework for ESP32.
+
+### 7.1 Libraries
+
+```cpp
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+```
+
+### 7.2 Measurement Parameters
+
+```cpp
+const float R_CHARGE = 100000.0;
+const float THRESHOLD_FACTOR = 0.693147;
+
+const unsigned long DISCHARGE_TIME_US = 1000;
+const unsigned long TIMEOUT_US = 1000000;
+const unsigned long CYCLE_INTERVAL_MS = 500;
+```
+
+| Parameter | Value | Purpose |
+|---|---:|---|
+| Charging resistance | 100 kΩ | Controls capacitor charging |
+| Threshold factor | 0.693147 | Corresponds to ln(2) |
+| Discharge duration | 1000 µs | Resets sensor capacitor |
+| Measurement timeout | 1,000,000 µs | Maximum threshold waiting time |
+| Measurement interval | 500 ms | Delay between measurement cycles |
+| Serial baud rate | 115200 | Serial communication |
+
+### 7.3 Capacitance Calculation
+
+The elapsed time is converted into seconds:
+
+$$
+t_s=t_{\mu s}\times10^{-6}
+$$
+
+The capacitance in farads is calculated as:
+
+$$
+C_F=\frac{t_s}{0.693147R}
+$$
+
+The result is converted into nanofarads:
+
+$$
+C_{nF}=C_F\times10^9
+$$
+
+### 7.4 Distance Calculation
+
+The measured capacitance is passed to:
+
+```cpp
+float distance_mm = calculateDistance(capacitance_nF);
+```
+
+The function evaluates the appropriate polynomial interval and returns the estimated displacement in millimeters.
+
+### 7.5 Output
+
+The Serial Monitor displays:
+
+```text
+C = 0.765 nF | t = ... us | Distance = 4.00 mm
+```
+
+The LCD displays the capacitance and estimated distance.
+
+The firmware also handles timeout conditions when no threshold transition is detected.
+
+---
+
+## 8. Experimental Characterization
+
+The experimental evaluation focuses on the relationship between electrode displacement and measured capacitance.
+
+The following tests can be used to characterize the system:
+
+- Capacitance versus displacement.
+- RC charging time versus displacement.
+- Electronic circuit measurements versus multimeter measurements.
+- Influence of charging resistance on measurement behavior.
+- Repeatability at fixed displacement positions.
+- Calibration error and measurement resolution.
+
+### Recommended Graphs
+
+| Graph | Purpose |
+|---|---|
+| Capacitance vs. displacement | Characterize the sensing element |
+| Charging time vs. displacement | Evaluate the RC interface |
+| Circuit vs. multimeter | Compare measurement methods |
+| Resistance comparison | Study the influence of charging resistance |
+| Calibration curve | Show the capacitance-to-distance relationship |
+| Measurement error | Evaluate the accuracy of the system |
+
+---
 
 ## 9. Repository Structure
-
-The repository is organized as follows:
 
 ```text
 capacitive-displacement-sensor/
@@ -350,6 +430,7 @@ capacitive-displacement-sensor/
 │   │   ├── sensor-electrodes.jpg
 │   │   ├── system-block-diagram.png
 │   │   ├── electronic-circuit.png
+│   │   ├── lcd-display.jpg
 │   │   ├── capacitance-comparison.png
 │   │   ├── resistance-comparison.png
 │   │   ├── calibration-curve.png
@@ -387,69 +468,60 @@ capacitive-displacement-sensor/
     └── mechanical-design/
 ```
 
-## 10. Limitations and Current Challenges
+---
 
-The initial implementation demonstrates the feasibility of RC-based capacitive displacement measurement. Several engineering challenges remain:
+## 10. Limitations and Future Improvements
 
-- Parasitic capacitance introduced by PCB tracks, wiring, and electronic components.
-- Limited timing resolution when measuring short RC charging intervals.
-- Comparator propagation delay and switching characteristics.
-- Sensitivity to electrical noise and reference-voltage stability.
-- Differences between the electronic circuit and multimeter measurements.
-- Nonlinear capacitance-to-displacement conversion.
-- Mechanical alignment and repeatability of the electrode spacing.
+### Current Limitations
 
-These limitations are being investigated through circuit modifications, resistance variation experiments, and calibration.
+- The measurement depends on the quality of the experimental calibration.
+- Parasitic capacitance can influence the measured capacitance.
+- The LM358 is an operational amplifier rather than a dedicated high-speed comparator.
+- The current firmware uses a fixed charging resistance.
+- Measurements outside the calibrated capacitance range are clamped to endpoint distances.
+- Mechanical alignment and stability influence the measurement results.
 
-## 11. Future Improvements
+### Future Improvements
 
-Potential improvements include:
-
-- Replacing the LM358 threshold detector with a dedicated comparator.
-- Implementing hysteresis to improve switching stability.
-- Investigating different RC charging resistances.
-- Improving timing measurement using ESP32 hardware peripherals.
-- Reducing parasitic capacitance through improved PCB layout and shielding.
-- Investigating AC excitation and capacitance-to-frequency measurement techniques.
-- Evaluating dedicated capacitance-to-digital converter ICs.
-- Improving displacement calibration and measurement accuracy.
-- Developing a dedicated PCB for the analog measurement interface.
-
-## 12. Tools and Technologies
-
-**Hardware**
-- ESP32-WROOM-32
-- LM358
-- C1815 NPN transistors
-- PCB capacitive electrodes
-- Analog electronic components
-
-**Software and Design**
-- Arduino IDE
-- C/C++ 
-- Python
-- Proteus
-- Kicad
-
-## 13. Project Documentation
-
-The detailed engineering report, experimental data, circuit schematics, and measurement graphs will be made available in the repository.
-
-- [Project Report](docs/report/project-report.pdf)
-- [Electronic Circuit Schematic](docs/schematics/circuit-schematic.pdf)
-- [Experimental Results](experiments/graphs/)
-- [Raw Measurement Data](experiments/raw-data/)
-
-## 14. Author
-
-**Abderraouf Brada**
-
-Electronics and Sensors Engineering Student  
-Interested in analog electronics, sensor systems, instrumentation, and robotics.
-
-- GitHub: [abderraoufbrada](https://github.com/abderraoufbrada)
-- LinkedIn: [Abderraouf Brada](https://www.linkedin.com/in/abderraouf-brada-16bab632a?utm_source=share_via&utm_content=profile&utm_medium=member_android)
+- Improve the analog threshold detection stage.
+- Investigate more stable capacitance measurement techniques.
+- Reduce parasitic capacitance through improved PCB layout and shielding.
+- Increase calibration data density.
+- Evaluate measurement repeatability and uncertainty.
+- Implement digital filtering or averaging.
+- Compare different RC charging resistances.
+- Investigate frequency-based or AC excitation measurement methods.
 
 ---
 
-*This project is an ongoing engineering development and experimental investigation. Measurements and performance claims are based on the documented experimental configurations and results.*
+## 11. Tools and Technologies
+
+- **Microcontroller:** ESP32
+- **Analog electronics:** LM358, C1815 transistors, RC circuit
+- **Sensing technology:** Parallel-plate capacitive sensing
+- **Display:** 16×2 I2C LCD
+- **Programming:** C/C++ with Arduino framework
+- **Data analysis:** Python
+- **Electronic design:** Proteus
+- **Mechanical design:** Autodesk Fusion 360
+
+---
+
+## 12. Author
+
+**Abderraouf Brada**
+
+Electronics and Sensors Engineering Student
+
+- GitHub: [abderraoufbrada](https://github.com/abderraoufbrada)
+- LinkedIn: [Abderraouf Brada](https://www.linkedin.com/in/abderraouf-brada-16bab632a/)
+
+---
+
+## 13. Project Status
+
+**Experimental prototype – Under development**
+
+The prototype demonstrates the conversion of capacitive variations into an estimated displacement using an RC timing interface, an ESP32, and an LCD display.
+
+Further experimental validation and improvements to the electronic measurement stage are required to establish the final measurement accuracy and repeatability.
