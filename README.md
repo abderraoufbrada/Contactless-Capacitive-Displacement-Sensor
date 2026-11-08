@@ -428,9 +428,8 @@ Potential improvements include:
 - Arduino IDE
 - C/C++ 
 - Python
-- MATLAB
 - Proteus
-- Autodesk Fusion 360
+- Kicad
 
 ## 13. Project Documentation
 
@@ -449,7 +448,7 @@ Electronics and Sensors Engineering Student
 Interested in analog electronics, sensor systems, instrumentation, and robotics.
 
 - GitHub: [abderraoufbrada](https://github.com/abderraoufbrada)
-- LinkedIn: [Abderraouf Brada](https://www.linkedin.com/in/abderraouf-brada-16bab632a/)
+- LinkedIn: [Abderraouf Brada](https://www.linkedin.com/in/abderraouf-brada-16bab632a?utm_source=share_via&utm_content=profile&utm_medium=member_android)
 
 ---
 
