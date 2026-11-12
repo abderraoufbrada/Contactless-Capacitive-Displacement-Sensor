@@ -163,7 +163,7 @@ The sensing element consists of two rectangular PCB electrodes.
 ### 5.3 Electronic Circuit
 
 <p align="center">
-  <img src="photo_2026-11-12_19-17-48.jpg" alt="Electronic Circuit Schematic" width="800">
+  <img src="photo_2026-11-12_19-17-48.jpg" alt="Electronic Circuit Schematic" width="450">
 </p>
 
 The initial electronic implementation uses an LM358-based threshold detection circuit.
