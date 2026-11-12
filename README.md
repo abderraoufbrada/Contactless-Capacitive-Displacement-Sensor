@@ -3,7 +3,7 @@
 **Design, Implementation, and Experimental Characterization of an RC-Based Capacitive Displacement Measurement System**
 
 <p align="center">
-  <img src="docs/images/project-banner.png" alt="Capacitive Displacement Sensor Project" width="800">
+  <img src="photo_2026-11-12_19-17-24.jpg" alt="Capacitive Displacement Sensor Project" width="800">
 </p>
 
 <p align="center">
@@ -155,7 +155,7 @@ The sensing element consists of two rectangular PCB electrodes.
 - Mechanical configuration: One fixed electrode and one movable electrode.
 
 <p align="center">
-  <img src="docs/images/sensor-electrodes.jpg" alt="PCB Capacitive Sensor Electrodes" width="650">
+  <img src="photo_2026-11-12_19-18-04.jpg" alt="PCB Capacitive Sensor Electrodes" width="650">
 </p>
 
 *Figure: Fabricated PCB electrodes used as the capacitive sensing element.*
@@ -163,7 +163,7 @@ The sensing element consists of two rectangular PCB electrodes.
 ### 5.3 Electronic Circuit
 
 <p align="center">
-  <img src="docs/images/electronic-circuit.png" alt="Electronic Circuit Schematic" width="800">
+  <img src="photo_2026-11-12_19-17-48.jpg" alt="Electronic Circuit Schematic" width="800">
 </p>
 
 The initial electronic implementation uses an LM358-based threshold detection circuit.
@@ -220,7 +220,7 @@ Dist:4.00mm
 If the threshold is not detected within the measurement timeout, the LCD displays a timeout message.
 
 <p align="center">
-  <img src="docs/images/lcd-display.jpg" alt="LCD Measurement Display" width="500">
+  <img src="photo_2026-11-12_19-17-54.jpg" alt="LCD Measurement Display" width="500">
 </p>
 
 *Figure: LCD displaying the measured capacitance and estimated displacement.*
