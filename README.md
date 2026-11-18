@@ -287,9 +287,7 @@ The relationship between capacitance and electrode displacement is nonlinear. Th
 
 The calibration is based on the measurements obtained using the multimeter (R = 1 MΩ). The measurements obtained with R = 100 kΩ and R = 400 kΩ are included for comparison to investigate the influence of resistance on the measured capacitance.
 
-\<p align="center">
-&#x20; \<img src="docs/images/calibration-curve.png" alt="Capacitance Calibration Curves" width="800">
-\</p>
+\<p align="center">   \<img src="docs/images/calibration-curve.png" alt="Capacitance Calibration Curves" width="800"> \</p>
 
 *Figure: Capacitance-displacement curves obtained using different resistance configurations.*
 
@@ -299,28 +297,28 @@ The Python implementation uses a **Piecewise Cubic Hermite Interpolating Polynom
 
 The interpolation function is expressed as:
 
-[
+```math
 d=f(C)
-]
+```
 
 Each interval is represented by a cubic polynomial:
 
-[
+```math
 d_i(C)=a_i t^3+b_i t^2+c_i t+e_i
-]
+```
 
 where:
 
-[
+```math
 t=C-C_i
-]
+```
 
 and:
 
-- (C): Measured capacitance (nF).
-- (d(C)): Estimated displacement (mm).
-- (C_i): Starting capacitance of the corresponding interval.
-- (a_i,b_i,c_i,e_i): Polynomial coefficients calculated by PCHIP.
+- `C`: Measured capacitance (nF).
+- `d(C)`: Estimated displacement (mm).
+- `C_i`: Starting capacitance of the corresponding interval.
+- `a_i, b_i, c_i, e_i`: Polynomial coefficients calculated by PCHIP.
 
 **Calibration Data**
 
@@ -343,11 +341,7 @@ The following table presents the experimental measurements obtained using the th
 
 The Python script generates the piecewise cubic polynomial coefficients and converts them into C code for implementation on the ESP32.
 
-The calibration function:
-
-`calculateDistance(float x)`
-
-receives capacitance in nF and returns the estimated displacement in mm.
+The calibration function `calculateDistance(float x)` receives capacitance in nF and returns the estimated displacement in mm.
 
 The interpolation is based on the R = 1 MΩ calibration dataset. For capacitance values outside the calibrated range, the function returns the corresponding endpoint displacement instead of extrapolating the polynomial.
 
@@ -357,9 +351,12 @@ The Python script used to generate and visualize the calibration curve and its c
 
 - [Calibration Curve and Function – Python Script](./calibration_curve_and_function_d=f\(c\).py)
 
-\<p align="center">   \<img src="Screenshot%202026-11-18%20090847.png" alt="Capacitance-to-Displacement Calibration Curve" width="800"> \</p>
+\<p align="center">
+&#x20; \<img src="Screenshot%202026-11-18%20090847.png" alt="Capacitance-to-Displacement Calibration Curve" width="800">
+\</p>
 
 *Figure: PCHIP interpolation of the R = 1 MΩ calibration measurements, with the other resistance configurations used for comparison.*
+
 
 
 ## 8. Software Implementation
