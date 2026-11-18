@@ -264,9 +264,15 @@ Increasing the resistance increases the charging time for a given capacitance. T
 
 Three resistance configurations were investigated to evaluate their influence on the measured capacitance.
 
-\<p align="center">   \<img src="docs/images/resistance-comparison.png" alt="Comparison of capacitance measurements for different charging resistances" width="850"> \</p>
+<p align="center">
+  <img src="./Screenshot%202026-11-18%20090847.png"
+       alt="Comparison of capacitance measurements for different charging resistances"
+       width="850">
+</p>
 
-*Figure: Capacitance-displacement measurements obtained using different resistance configurations.*
+<p align="center">
+  <em>Figure: Capacitance-displacement measurements obtained using different charging resistance configurations.</em>
+</p>
 
 **Experimental Results**
 
