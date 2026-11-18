@@ -287,7 +287,7 @@ The relationship between capacitance and electrode displacement is nonlinear. Th
 
 The calibration is based on the measurements obtained using the multimeter (R = 1 MΩ). The measurements obtained with R = 100 kΩ and R = 400 kΩ are included for comparison to investigate the influence of resistance on the measured capacitance.
 
-\<p align="center">   \<img src="docs/images/calibration-curve.png" alt="Capacitance Calibration Curves" width="800"> \</p>
+\<p align="center">   \<img src="Screenshot 2026-11-18 090847.png" alt="Capacitance Calibration Curves" width="700"> \</p>
 
 *Figure: Capacitance-displacement curves obtained using different resistance configurations.*
 
