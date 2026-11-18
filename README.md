@@ -169,7 +169,7 @@ The sensing element consists of two rectangular PCB electrodes.
 
 The initial electronic implementation uses an LM358-based threshold detection circuit.
 
-**KiCad Project:** [View KiCad Files](./KiCad/)
+**KiCad Project:** [View KiCad Files](displacement capacitive instrument.kicad_sch)
 
 The ESP32 controls the discharge transistor through GPIO26 and reads the detection signal through GPIO27.
 
