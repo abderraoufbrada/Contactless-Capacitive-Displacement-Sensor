@@ -254,115 +254,101 @@ The electronic circuit successfully detects displacement-related capacitance var
 
 ### 6.2 Charging Resistance Investigation
 
-The charging resistance directly influences the RC charging time:
+The charging resistance directly influences the RC charging time, according to:
 
-$$
+\[
 t=0.693RC
-$$
+\]
 
-Increasing the resistance increases the measured charging time for a given capacitance. This can improve the practical timing resolution, although excessively high resistance may increase sensitivity to leakage currents, noise, and parasitic effects.
+Increasing the resistance increases the charging time for a given capacitance. This can improve practical timing resolution, although excessively high resistance may increase sensitivity to leakage currents, noise, and parasitic effects.
 
-Experiments will be conducted using different charging resistances to evaluate their influence on measurement performance.
+Different resistance configurations were investigated to evaluate their influence on the measured capacitance and overall measurement behavior.
 
 <p align="center">
   <img src="docs/images/resistance-comparison.png" alt="Comparison of measurement results for different charging resistances" width="850">
 </p>
 
-*Figure: Capacitance or charging-time response obtained using different RC charging resistances.*
+*Figure: Comparison of measurement responses obtained using different resistance configurations.*
 
 **Experimental configurations:**
 
-| Configuration | Charging Resistance | Status |
-|---|---:|---|
-| R1 | 100 kΩ | Initial implementation |
-| R2 | 1 MΩ | To be evaluated |
-| R3 | 4.7 MΩ | To be evaluated |
-| R4 | 10 MΩ | To be evaluated |
-
-*Only experimentally tested configurations should be reported as measured results.*
+| Configuration | Charging Resistance |
+|---|---:|
+| R1 | 100 kΩ |
+| R2 | 400 kΩ |
+| R3 | 1 MΩ |
 
 ### 6.3 Calibration
 
-The relationship between capacitance and electrode displacement is nonlinear. Therefore, a calibration procedure is used to establish the relationship between measured capacitance and known mechanical positions.
+The relationship between capacitance and electrode displacement is nonlinear. Therefore, calibration is required to estimate displacement from the measured capacitance.
 
-The calibration is based on the measurements obtained using the multimeter (R = 1 MΩ). The measurements obtained with R = 100 kΩ and R = 400 kΩ are included for comparison to investigate the influence of resistance on the measured capacitance.
-
-<p align="center">
-  <img src="./Screenshot%202026-11-18%20090847.png"
-       alt="Capacitance Calibration Curves"
-       width="700">
-</p>
+The calibration uses the measurements obtained with the multimeter (R = 1 MΩ). The measurements from the other resistance configurations are retained for comparison but are not used for the firmware calibration.
 
 <p align="center">
-  <em>Figure: Capacitance-displacement curves obtained using different resistance configurations.</em>
+  <img src="./Screenshot%202026-11-18%20090847.png" alt="Capacitance Calibration Curves" width="700">
 </p>
+
+*Figure: Experimental capacitance-displacement curves for the different resistance configurations.*
 
 **Interpolation Method**
 
-The Python implementation uses a **Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)** to construct the calibration curve and estimate displacement from measured capacitance.
+A **Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)** is used to construct the calibration curve and estimate displacement from measured capacitance.
 
-The interpolation function is expressed as:
+The interpolation function is:
 
-```math
+\[
 d=f(C)
-```
+\]
 
 Each interval is represented by a cubic polynomial:
 
-```math
+\[
 d_i(C)=a_i t^3+b_i t^2+c_i t+e_i
-```
+\]
 
 where:
 
-```math
+\[
 t=C-C_i
-```
+\]
 
-and:
+The variables represent:
 
-- `C`: Measured capacitance (nF).
-- `d(C)`: Estimated displacement (mm).
-- `C_i`: Starting capacitance of the corresponding interval.
-- `a_i, b_i, c_i, e_i`: Polynomial coefficients calculated by PCHIP.
+- \(C\): Measured capacitance (nF).
+- \(d(C)\): Estimated displacement (mm).
+- \(C_i\): Starting capacitance of the corresponding interval.
+- \(a_i,b_i,c_i,e_i\): Polynomial coefficients calculated by PCHIP.
 
-**Calibration Data**
+**Experimental Calibration Data**
 
-The following table presents the experimental measurements obtained using the three resistance configurations.
+The following table summarizes the measured capacitance values at different electrode displacements.
 
-| Displacement (mm) | R = 100 kΩ (nF) | R = 400 kΩ (nF) | R = 1 MΩ (nF) |
-| ----------------: | --------------: | --------------: | ------------: |
-|                 2 |           0.231 |           0.418 |         0.981 |
-|                 3 |           0.231 |           0.390 |         0.837 |
-|                 4 |           0.216 |           0.361 |         0.765 |
-|                 5 |           0.202 |           0.346 |         0.692 |
-|                 6 |           0.202 |           0.332 |         0.664 |
-|                 7 |           0.202 |           0.332 |         0.635 |
-|                 8 |           0.188 |           0.317 |         0.620 |
-|                 9 |           0.188 |           0.317 |         0.606 |
-|                10 |           0.188 |           0.317 |         0.592 |
-|                11 |           0.188 |           0.303 |         0.577 |
+| Displacement (mm) | 100 kΩ (nF) | 400 kΩ (nF) | 1 MΩ (nF) |
+|---:|---:|---:|---:|
+| 2 | 0.231 | 0.418 | 0.981 |
+| 3 | 0.231 | 0.390 | 0.837 |
+| 4 | 0.216 | 0.361 | 0.765 |
+| 5 | 0.202 | 0.346 | 0.692 |
+| 6 | 0.202 | 0.332 | 0.664 |
+| 7 | 0.202 | 0.332 | 0.635 |
+| 8 | 0.188 | 0.317 | 0.620 |
+| 9 | 0.188 | 0.317 | 0.606 |
+| 10 | 0.188 | 0.317 | 0.592 |
+| 11 | 0.188 | 0.303 | 0.577 |
 
 **Firmware Implementation**
 
-The Python script generates the piecewise cubic polynomial coefficients and converts them into C code for implementation on the ESP32.
+The Python implementation generates the PCHIP polynomial coefficients and converts them into C code for the ESP32.
 
-The calibration function `calculateDistance(float x)` receives capacitance in nF and returns the estimated displacement in mm.
+The function `calculateDistance(float x)` receives capacitance in nF and returns the estimated displacement in mm.
 
-The interpolation is based on the R = 1 MΩ calibration dataset. For capacitance values outside the calibrated range, the function returns the corresponding endpoint displacement instead of extrapolating the polynomial.
+The firmware uses the R = 1 MΩ calibration dataset. For capacitance values outside the calibrated range, the function returns the corresponding endpoint displacement rather than extrapolating the polynomial.
 
 **Python Implementation**
 
-The Python script used to generate and visualize the calibration curve and its corresponding C function is available here:
+The Python script used to generate the calibration curve and corresponding C function is available here:
 
-- [Calibration Curve and Function – Python Script](./calibration_curve_and_function_d=f\(c\).py)
-
-\<p align="center">
-&#x20; \<img src="Screenshot%202026-11-18%20090847.png" alt="Capacitance-to-Displacement Calibration Curve" width="800">
-\</p>
-
-*Figure: PCHIP interpolation of the R = 1 MΩ calibration measurements, with the other resistance configurations used for comparison.*
-
+- [Calibration Curve and Function – Python Script](./calibration_curve_and_function_d=f%28c%29.py)
 
 
 ## 8. Software Implementation
