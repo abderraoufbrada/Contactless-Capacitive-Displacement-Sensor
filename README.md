@@ -242,9 +242,11 @@ The capacitance was recorded at different electrode positions while maintaining 
 
 ### 6.1 Electronic Circuit vs. Digital Multimeter
 
-<p align="center">
-  <img src="docs/images/capacitance-comparison.png" alt="Capacitance versus Displacement: Electronic Circuit and Multimeter" width="900">
-</p>
+<div align="center">
+  <img src="photo_2026-11-18_15-17-30.jpg" alt="" width="50%">
+  <img src="photo_2026-11-18_15-17-27.jpg" alt="" width="50%">
+</div>
+
 
 *Figure: Experimental comparison of capacitance measurements obtained using the developed circuit and a digital multimeter.*
 
