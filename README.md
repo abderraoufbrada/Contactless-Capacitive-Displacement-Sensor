@@ -330,7 +330,50 @@ and:
 
 The Python implementation generates the PCHIP polynomial coefficients and converts them into C code for the ESP32.
 
-The function `calculateDistance(float x)` receives capacitance in nF and returns the estimated displacement in mm.
+The function `calculateDistance(float x) { float calculateDistance(float x) {
+  if (x <= 0.577f) {
+    return 11.0f;
+  }
+  else if (x < 0.592f) {
+    float t = x - 0.577f;
+    return ((608.257985f * t + -173.327482f) * t + -64.2036125f) * t + 11.0f;
+  }
+  else if (x < 0.606f) {
+    float t = x - 0.592f;
+    return ((12427.0848f * t + -347.958374f) * t + -68.9928628f) * t + 10.0f;
+  }
+  else if (x < 0.62f) {
+    float t = x - 0.606f;
+    return ((12427.0848f * t + -173.979187f) * t + -71.4285714f) * t + 9.0f;
+  }
+  else if (x < 0.635f) {
+    float t = x - 0.62f;
+    return ((76881.8568f * t + -998.148109f) * t + -68.9928628f) * t + 8.0f;
+  }
+  else if (x < 0.664f) {
+    float t = x - 0.635f;
+    return ((-15657.3781f * t + 887.143074f) * t + -47.0420527f) * t + 7.0f;
+  }
+  else if (x < 0.692f) {
+    float t = x - 0.664f;
+    return ((19301.1851f * t + -562.681975f) * t + -35.0913195f) * t + 6.0f;
+  }
+  else if (x < 0.765f) {
+    float t = x - 0.692f;
+    return ((-1426.38106f * t + 206.954484f) * t + -21.2051228f) * t + 5.0f;
+  }
+  else if (x < 0.837f) {
+    float t = x - 0.765f;
+    return ((842.799196f * t + -62.0088582f) * t + -13.7933221f) * t + 4.0f;
+  }
+  else if (x < 0.981f) {
+    float t = x - 0.837f;
+    return ((94.4584037f * t + 4.9461855f) * t + -9.61538462f) * t + 3.0f;
+  }
+  else {
+    return 2.0f;
+  }
+} ` receives capacitance in nF and returns the estimated displacement in mm.
 
 The interpolation uses the 1 MΩ calibration dataset. For capacitance values outside the calibrated range, the function returns the corresponding endpoint displacement instead of extrapolating the polynomial.
 
