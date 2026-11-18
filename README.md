@@ -256,9 +256,9 @@ The electronic circuit successfully detects displacement-related capacitance var
 
 The charging resistance directly influences the RC charging time, according to:
 
-[
-t=0.693RC
-]
+$$
+t = 0.693RC
+$$
 
 Increasing the resistance increases the charging time for a given capacitance. This can improve practical timing resolution, although excessively high resistance may increase sensitivity to leakage currents, noise, and parasitic effects.
 
@@ -277,19 +277,19 @@ Three resistance configurations were investigated to evaluate their influence on
 **Experimental Results**
 
 | Displacement (mm) | 100 kΩ (nF) | 400 kΩ (nF) | 1 MΩ (nF) |
-| ----------------: | ----------: | ----------: | --------: |
-|                 2 |       0.231 |       0.418 |     0.981 |
-|                 3 |       0.231 |       0.390 |     0.837 |
-|                 4 |       0.216 |       0.361 |     0.765 |
-|                 5 |       0.202 |       0.346 |     0.692 |
-|                 6 |       0.202 |       0.332 |     0.664 |
-|                 7 |       0.202 |       0.332 |     0.635 |
-|                 8 |       0.188 |       0.317 |     0.620 |
-|                 9 |       0.188 |       0.317 |     0.606 |
-|                10 |       0.188 |       0.317 |     0.592 |
-|                11 |       0.188 |       0.303 |     0.577 |
+|---:|---:|---:|---:|
+| 2 | 0.231 | 0.418 | 0.981 |
+| 3 | 0.231 | 0.390 | 0.837 |
+| 4 | 0.216 | 0.361 | 0.765 |
+| 5 | 0.202 | 0.346 | 0.692 |
+| 6 | 0.202 | 0.332 | 0.664 |
+| 7 | 0.202 | 0.332 | 0.635 |
+| 8 | 0.188 | 0.317 | 0.620 |
+| 9 | 0.188 | 0.317 | 0.606 |
+| 10 | 0.188 | 0.317 | 0.592 |
+| 11 | 0.188 | 0.303 | 0.577 |
 
-The results show that the resistance configuration significantly affects the measured capacitance values. The 1 MΩ configuration provides the dataset selected for the displacement calibration.
+The results show that the resistance configuration significantly affects the measured capacitance values. The 1 MΩ configuration provides the dataset selected for displacement calibration.
 
 ### 6.3 Calibration
 
@@ -301,28 +301,28 @@ A **Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)** is used to constr
 
 The interpolation function is expressed as:
 
-[
-d=f(C)
-]
+$$
+d = f(C)
+$$
 
 Each interval is represented by a cubic polynomial:
 
-[
-d_i(C)=a_i t^3+b_i t^2+c_i t+e_i
-]
+$$
+d_i(C) = a_i t^3 + b_i t^2 + c_i t + e_i
+$$
 
 where:
 
-[
-t=C-C_i
-]
+$$
+t = C - C_i
+$$
 
 and:
 
-- (C): Measured capacitance (nF).
-- (d(C)): Estimated displacement (mm).
-- (C_i): Starting capacitance of the corresponding interval.
-- (a_i,b_i,c_i,e_i): Polynomial coefficients calculated by PCHIP.
+- C: Measured capacitance (nF).
+- d(C): Estimated displacement (mm).
+- C_i: Starting capacitance of the corresponding interval.
+- a_i, b_i, c_i, e_i: Polynomial coefficients calculated by PCHIP.
 
 **Firmware Implementation**
 
