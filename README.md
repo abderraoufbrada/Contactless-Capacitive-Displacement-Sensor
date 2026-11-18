@@ -361,8 +361,13 @@ $$
 $$
 
 ## 8. Software Implementation
+### 8.1 Source Code
 
-The ESP32 firmware is developed using the Arduino framework.
+The complete ESP32 firmware, developed using the Arduino framework, is available here:
+
+- [Main Arduino Code](c++_code_of_esb32.ino)
+- [Calibration Code](firmware/calibration/calibration.ino)
+
 
 The firmware performs:
 
