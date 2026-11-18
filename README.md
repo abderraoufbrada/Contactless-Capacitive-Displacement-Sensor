@@ -115,7 +115,7 @@ The ESP32 measures the time required for the sensor voltage to cross the referen
 ## 4. System Architecture
 
 <p align="center">
-  <img src="Screenshot 2026-11-18 090413.png" alt="System Block Diagram" width="800">
+  <img src="Screenshot 2026-11-18 090413.png" alt="System Block Diagram" width="600">
 </p>
 
 The system is divided into five main functional blocks:
@@ -155,7 +155,7 @@ The sensing element consists of two rectangular PCB electrodes.
 - Mechanical configuration: One fixed electrode and one movable electrode.
 
 <p align="center">
-  <img src="photo_2026-11-12_19-18-04.jpg" alt="PCB Capacitive Sensor Electrodes" width="350">
+  <img src="photo_2026-11-12_19-18-04.jpg" alt="PCB Capacitive Sensor Electrodes" width="250">
 </p>
 
 *Figure: Fabricated PCB electrodes used as the capacitive sensing element.*
