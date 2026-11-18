@@ -115,7 +115,7 @@ The ESP32 measures the time required for the sensor voltage to cross the referen
 ## 4. System Architecture
 
 <p align="center">
-  <img src="docs/images/system-block-diagram.png" alt="System Block Diagram" width="800">
+  <img src="Screenshot 2026-11-18 090413.png" alt="System Block Diagram" width="800">
 </p>
 
 The system is divided into five main functional blocks:
