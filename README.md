@@ -322,7 +322,7 @@ The current calibration breakpoints are:
 
 The Python implementation used to generate and visualize the calibration curve is available here:
 
-- [Calibration Curve – Python Script](experiments/analysis/calibration_curve.py)
+- [Calibration Curve – Python Script](calibration_curve_and_function_d=f(c).py)
 - [Calibration Curve – Generated Plot](docs/images/calibration-curve.png)
 - 
  <p align="center">
