@@ -323,10 +323,10 @@ The current calibration breakpoints are:
 The Python implementation used to generate and visualize the calibration curve is available here:
 
 - [Calibration Curve – Python Script](calibration_curve_and_function_d=f(c).py)
-- [Calibration Curve – Generated Plot](docs/images/calibration-curve.png)
+
 - 
  <p align="center">
-  <img src="docs/images/calibration-curve.png"
+  <img src="Screenshot 2026-11-18 090847.png"
        alt="Capacitance-to-Displacement Calibration Curve"
        width="800">
 </p>
