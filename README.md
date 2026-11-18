@@ -163,7 +163,7 @@ The sensing element consists of two rectangular PCB electrodes.
 ### 5.3 Electronic Circuit
 
 <div align="center">
-  <img src="photo_2026-11-12_19-17-48.jpg" alt="Electronic Circuit Schematic" width="48%">
+  <img src="photo_2026-11-12_19-17-48.jpg" alt="Electronic Circuit Schematic" width="30%">
   <img src="Screenshot 2026-11-18 090413.png" alt="Electronic Circuit Implementation" width="48%">
 </div>
 
