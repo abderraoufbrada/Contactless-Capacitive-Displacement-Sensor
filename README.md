@@ -1,3 +1,4 @@
+
 # Contactless Capacitive Displacement Sensor
 
 **Design, Implementation, and Experimental Characterization of an RC-Based Capacitive Displacement Measurement System**
@@ -39,7 +40,7 @@ The main objectives are:
 - Display capacitance and displacement on an I2C LCD.
 - Investigate the influence of charging resistance on measurement performance.
 - Compare the electronic measurement system against a digital multimeter.
-- Evaluate sensitivity, repeatability, resolution, and measurement error.
+- Investigate sensitivity, repeatability, resolution, and measurement error.
 
 ## 3. Operating Principle
 
@@ -64,6 +65,8 @@ Where:
 For an air dielectric, $\varepsilon_r \approx 1$.
 
 As the distance between the electrodes increases, capacitance decreases. Conversely, reducing the distance increases capacitance.
+
+In the practical implementation, the measured capacitance also includes parasitic and fringing-field contributions. Therefore, the theoretical equation provides an approximation, while experimental calibration establishes the actual capacitance-to-displacement relationship.
 
 ### 3.2 RC Time Measurement
 
@@ -90,7 +93,7 @@ $$
 The corresponding charging time is:
 
 $$
-t=RC\ln(2)
+t=RC\ln(2)\approx0.693RC
 $$
 
 Therefore, the capacitance can be estimated using:
@@ -98,6 +101,8 @@ Therefore, the capacitance can be estimated using:
 $$
 C=\frac{t}{R\ln(2)}
 $$
+
+This relationship assumes that the capacitor initially has approximately zero voltage and that the threshold voltage is equal to half the charging supply voltage.
 
 The ESP32 measures the time required for the sensor voltage to cross the reference threshold. This time is then used to calculate the capacitance.
 
@@ -138,7 +143,7 @@ The system is divided into five main functional blocks:
 | LM358 | Analog threshold detection |
 | 2 × C1815 | NPN switching transistors |
 | PCB Electrodes | Capacitive sensing element |
-| 100 kΩ resistor | Initial RC charging resistance |
+| 1 MΩ resistor | RC charging resistance used for calibration |
 | 10 kΩ resistors | Reference-voltage divider and signal pull-up |
 | 4.7 kΩ resistors | Transistor base resistors |
 | 100 nF capacitor | Supply decoupling |
@@ -224,7 +229,7 @@ If the threshold is not detected within the measurement timeout, the LCD display
 
 <p align="center">
   <img src="photo_2026-11-12_19-17-54.jpg" alt="LCD Measurement Display" width="50%">
-  <img src="photo_2026-11-18_14-23-05.jpg" alt="reading from the ruler" width="50%">
+  <img src="photo_2026-11-18_14-23-05.jpg" alt="Displacement reading from the ruler" width="50%">
 </p>
 
 *Figure: LCD displaying the measured capacitance and estimated displacement.*
@@ -243,10 +248,9 @@ The capacitance was recorded at different electrode positions while maintaining 
 ### 6.1 Electronic Circuit vs. Digital Multimeter
 
 <div align="center">
-  <img src="photo_2026-11-18_15-17-30.jpg" alt="" width="50%">
-  <img src="photo_2026-11-18_15-17-27.jpg" alt="" width="50%">
+  <img src="photo_2026-11-18_15-17-30.jpg" alt="Electronic Circuit Measurement" width="50%">
+  <img src="photo_2026-11-18_15-17-27.jpg" alt="Digital Multimeter Measurement" width="50%">
 </div>
-
 
 *Figure: Experimental comparison of capacitance measurements obtained using the developed circuit and a digital multimeter.*
 
@@ -261,6 +265,8 @@ The charging resistance directly influences the RC charging time, according to:
 $$
 t = 0.693RC
 $$
+
+This expression applies when the threshold voltage is half the charging supply voltage.
 
 Increasing the resistance increases the charging time for a given capacitance. This can improve practical timing resolution, although excessively high resistance may increase sensitivity to leakage currents, noise, and parasitic effects.
 
@@ -381,21 +387,22 @@ float calculateDistance(float x) {
 
 The interpolation uses the 1 MΩ calibration dataset. For capacitance values outside the calibrated range, the function returns the corresponding endpoint displacement rather than extrapolating the polynomial.
 
+The calibration function operates over the experimentally characterized capacitance range of 0.577–0.981 nF, corresponding to displacement values between 11 mm and 2 mm.
+
 **Python Implementation**
 
 The Python script used to generate the calibration function and its visualization is available here:
 
 - [Calibration Curve and Function – Python Script](./calibration_curve_and_function_d=f%28c%29.py)
 
-
 ## 8. Software Implementation
+
 ### 8.1 Source Code
 
 The complete ESP32 firmware, developed using the Arduino framework, is available here:
 
 - [Main Arduino Code](c++_code_of_esb32.ino)
 - [Calibration Code](firmware/calibration/calibration.ino)
-
 
 The firmware performs:
 
@@ -409,27 +416,27 @@ The firmware performs:
 
 The measurement sequence is repeated periodically to provide continuous sensor monitoring.
 
-### 8.1 Libraries
+### 8.2 Libraries
 
 ```cpp
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 ```
 
-### 8.2 Measurement Parameters
+### 8.3 Measurement Parameters
 
 The current firmware uses the following parameters:
 
 | Parameter | Value | Purpose |
 |---|---:|---|
-| Charging resistance | 100 kΩ | Controls capacitor charging |
+| Charging resistance | 1 MΩ | Controls capacitor charging |
 | Threshold factor | 0.693147 | Corresponds to ln(2) |
 | Discharge duration | 1000 µs | Resets sensor capacitor |
 | Measurement timeout | 1,000,000 µs | Maximum threshold waiting time |
 | Measurement interval | 500 ms | Delay between measurement cycles |
 | Serial baud rate | 115200 | Serial communication |
 
-### 8.3 Capacitance Calculation
+### 8.4 Capacitance Calculation
 
 The elapsed time is converted into seconds:
 
@@ -455,7 +462,7 @@ The calculated capacitance is subsequently passed to the calibration function:
 float distance_mm = calculateDistance(capacitance_nF);
 ```
 
-### 8.4 Output
+### 8.5 Output
 
 The Serial Monitor displays the measured capacitance, charging time, and estimated displacement.
 
@@ -535,7 +542,7 @@ The initial implementation demonstrates the feasibility of RC-based capacitive d
 
 - Parasitic capacitance introduced by PCB tracks, wiring, and electronic components.
 - Limited timing resolution when measuring short RC charging intervals.
-- Comparator propagation delay and switching characteristics.
+- LM358 propagation delay and switching characteristics.
 - Sensitivity to electrical noise and reference-voltage stability.
 - Differences between the electronic circuit and multimeter measurements.
 - Nonlinear capacitance-to-displacement conversion.
@@ -560,6 +567,7 @@ Potential improvements include:
 ## 12. Tools and Technologies
 
 **Hardware**
+
 - ESP32-WROOM-32
 - LM358
 - C1815 NPN transistors
@@ -568,10 +576,11 @@ Potential improvements include:
 - Analog electronic components
 
 **Software and Design**
+
 - Arduino IDE
 - C/C++
 - Python
-- Kicad
+- KiCad
 
 ## 13. Project Documentation
 
@@ -579,13 +588,12 @@ The detailed engineering report, experimental data, circuit schematics, and meas
 
 - [Project Report](docs/report/project-report.pdf)
 
-
-
 ## 14. Author
 
 **Abderraouf Brada**
 
 Electronics and Sensors Engineering Student
+
 Interested in analog electronics, micro- and nanosensors, electronic instrumentation, semiconductor devices, optoelectronics, photonics, embedded systems, and signal processing.
 
 - GitHub: [abderraoufbrada](https://github.com/abderraoufbrada)
