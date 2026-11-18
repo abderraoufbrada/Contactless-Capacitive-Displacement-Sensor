@@ -320,6 +320,16 @@ The current calibration breakpoints are:
 | 0.837 | 3 |
 | 0.981 | 2 |
 
+The Python implementation used to generate and visualize the calibration curve is available here:
+
+- [Calibration Curve – Python Script](experiments/analysis/calibration_curve.py)
+- [Calibration Curve – Generated Plot](docs/images/calibration-curve.png)
+- 
+ <p align="center">
+  <img src="docs/images/calibration-curve.png"
+       alt="Capacitance-to-Displacement Calibration Curve"
+       width="800">
+</p>
 For measurements outside this calibrated range, the current firmware returns the corresponding endpoint distance rather than extrapolating the polynomial.
 
 ## 7. Measurement Performance Evaluation
