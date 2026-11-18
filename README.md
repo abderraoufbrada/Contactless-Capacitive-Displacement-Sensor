@@ -221,7 +221,8 @@ Dist:4.00mm
 If the threshold is not detected within the measurement timeout, the LCD displays a timeout message.
 
 <p align="center">
-  <img src="photo_2026-11-12_19-17-54.jpg" alt="LCD Measurement Display" width="250">
+  <img src="photo_2026-11-12_19-17-54.jpg" alt="LCD Measurement Display" width="50%">
+  <img src="photo_2026-11-18_14-23-05.jpg" alt="reading from the ruler" width="50%">
 </p>
 
 *Figure: LCD displaying the measured capacitance and estimated displacement.*
