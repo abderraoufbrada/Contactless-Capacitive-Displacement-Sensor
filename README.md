@@ -169,6 +169,8 @@ The sensing element consists of two rectangular PCB electrodes.
 
 The initial electronic implementation uses an LM358-based threshold detection circuit.
 
+**KiCad Project:** [View KiCad Files](./KiCad/)
+
 The ESP32 controls the discharge transistor through GPIO26 and reads the detection signal through GPIO27.
 
 | ESP32 Pin | Connection | Function |
@@ -551,16 +553,15 @@ Potential improvements include:
 The detailed engineering report, experimental data, circuit schematics, and measurement graphs will be made available in the repository.
 
 - [Project Report](docs/report/project-report.pdf)
-- [Electronic Circuit Schematic](docs/schematics/circuit-schematic.pdf)
-- [Experimental Results](experiments/graphs/)
-- [Raw Measurement Data](experiments/raw-data/)
+
+
 
 ## 14. Author
 
 **Abderraouf Brada**
 
-Electronics and Sensors Engineering Student  
-Interested in analog electronics, sensor systems, instrumentation, and robotics.
+Electronics and Sensors Engineering Student
+Interested in analog electronics, micro- and nanosensors, electronic instrumentation, semiconductor devices, optoelectronics, photonics, embedded systems, and signal processing.
 
 - GitHub: [abderraoufbrada](https://github.com/abderraoufbrada)
 - LinkedIn: [Abderraouf Brada](https://www.linkedin.com/in/abderraouf-brada-16bab632a?utm_source=share_via&utm_content=profile&utm_medium=member_android)
